@@ -56,17 +56,18 @@ return 0;
     
 }
 
-void ValueIt(float cf[], int n) {
+void GraphIt(float cf[], int n) {
+    
+/*1.------------coordinates.tmp-------------------*/
     int x;
     FILE *fp = NULL;
     FILE *gnupipe = NULL;
-    char *GnuCommands [] = {};
 
     fp = fopen("coordinates.tmp","w");
     gnupipe = popen("gnuplot -persistent","w");
 
-    fprintf(fp,"|-----original-----|-----diffrentiated-----|-----integraled-----|\n\n");
-    
+    printf("|-----original-----|-----diffrentiated-----|-----integraled-----|\n\n");
+   
     
     for(x = -5; x <= 5; x++) {
         float y = 0,yd = 0,yi = 0;
@@ -79,7 +80,7 @@ void ValueIt(float cf[], int n) {
                 y = cf[0];
             }
 
-        } fprintf(fp,"|   (%d, %0.2f)",x,y);
+        } printf("|   (%d, %0.2f)",x,y); fprintf(fp,"%d %0.2f",x, y);
         
         // for blanks(original)
         int vO = y;
@@ -98,10 +99,10 @@ void ValueIt(float cf[], int n) {
         }
         
         for(int bO = 7-blankO; bO > 0; bO--) {
-            fprintf(fp," ");
+            printf(" ");
         }
 
-        fprintf(fp,"|");
+        printf("|");
 
         //output(differentiated)
         for(int j = n; j >= 0; j--) {
@@ -110,7 +111,7 @@ void ValueIt(float cf[], int n) {
             } else {
                 yd = cf[1];
             }
-        } fprintf(fp,"      (%d, %0.2f)",x,yd); 
+        } printf("      (%d, %0.2f)",x,yd); fprintf(fp," %0.2f ",yd);
 
         // for blanks(differentiated)
         int vD = yd;
@@ -127,10 +128,10 @@ void ValueIt(float cf[], int n) {
         }
         
         for(int bD = 9-blankD; bD > 0; bD--) {
-            fprintf(fp," ");
+            printf(" ");
         }
 
-        fprintf(fp,"|");
+        printf("|");
 
         //output(integraled)
         for(int k = n; k>=0; k--) {
@@ -139,7 +140,7 @@ void ValueIt(float cf[], int n) {
             } else {
                 yi = 0;
             }
-        } fprintf(fp,"    (%d, %0.2f) ",x,yi);
+        } printf("    (%d, %0.2f) ",x,yi); fprintf(fp,"%0.2f\n",yi);
 
         // for blanks(integraled)
         int vI = yi;
@@ -156,13 +157,21 @@ void ValueIt(float cf[], int n) {
         }
         
         for(int bI = 7-blankI; bI > 0; bI--) {
-            fprintf(fp," ");
+            printf(" ");
         }
 
-        fprintf(fp,"|\n");   
+        printf("|\n");   
     }
 
 
+/*2.-------------plotting Graph ------------*/
+const char *GnuCommands [] = {"set title \"Graph\"", "plot 'coordinates.tmp' using 1:2 title 'original' w lp,\
+                                                           'coordinates.tmp' using 1:3 title 'differentiated' w lp,\
+                                                           'coordinates.tmp' using 1:4 title 'Integraled' w lp" };
+
+for (int i = 0; i < 2; i++) {
+    fprintf(gnupipe, "%s\n",GnuCommands[i]);
+}
 
 
 
@@ -180,7 +189,7 @@ int main(void) {
         printf("enter the coefficient of %dth power: ", i); scanf("%f",&cf[i]);
     }
 
-    printf("your expression is: \n ");
+    printf("your original expression is: \n ");
 
     for(int j = n; j >= 0; j--) {
 
@@ -200,7 +209,7 @@ int main(void) {
     integral(cf,n);
     printf("\n");
     printf("\n");
-    ValueIt(cf,n);
+    GraphIt(cf,n);
     printf("\n");
       
 }
