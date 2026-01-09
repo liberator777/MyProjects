@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-#include "gnuplot-iostream.h"
 
 #pragma warning(disable:4996)
 
